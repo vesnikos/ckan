@@ -1,10 +1,10 @@
+# encoding: utf-8
 import logging
 import sys
 import click
 import ckan.plugins as p
 import ckan.logic as logic
 from ckan.cli import error_shout
-
 
 log = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ def jobs():
                          u'from queues and executes them.',
               )
 @click.option('--burst', help='Start worker in burst mode.', is_flag=True)
-@click.argument(u'queues', metavar=u'QUEUES', nargs=-1, type=click.STRING)
+@click.argument(u'queues', metavar=u'[QUEUES]', nargs=-1)
 def worker(queues, burst):
     u"""
     Start a worker that fetches jobs from queues and executes
@@ -48,7 +48,7 @@ def worker(queues, burst):
 
 
 @jobs.command(name=u'list', short_help=u'List currently enqueued jobs from the given queues.')
-@click.argument(u'queues', metavar=u'QUEUES', nargs=-1, type=click.STRING)
+@click.argument(u'queues', metavar=u'[QUEUES]', required=True, nargs=-1)
 def list_(queues):
     u"""
     List currently enqueued jobs from the given queues. If no queue
@@ -68,14 +68,12 @@ def list_(queues):
 
 
 @jobs.command(name=u'show', short_help=u'Show details about a specific job.')
-@click.argument(u'id', metavar=u'ID',
-                type=click.STRING, required=True)
+@click.argument(u'id', metavar=u'ID', required=True)
 def show(id):
     u"""
     Show details about a specific job.
     """
-    # if not self.args:
-    #     error(u'You must specify a job ID')
+
     try:
         job = p.toolkit.get_action(u'job_show')({}, {u'id': id})
     except logic.NotFound:
@@ -92,13 +90,14 @@ def show(id):
 
 
 @jobs.command(name=u'cancel', short_help=u'Cancel a specific job.')
-@click.argument(u'id', metavar=u'ID', type=click.STRING, required=True)
+@click.argument(u'id', metavar=u'ID', required=True)
 def cancel(id):
     u"""
     Cancel a specific job. Jobs can only be canceled while they are
     enqueued. Once a worker has started executing a job it cannot
     be aborted anymore.
     """
+
     try:
         p.toolkit.get_action(u'job_cancel')({}, {u'id': id})
     except logic.NotFound:
@@ -108,11 +107,13 @@ def cancel(id):
 
 
 @jobs.command(name=u'clear', short_help=u'Cancel all jobs on the given queues.')
-@click.argument(u'queues', metavar=u'QUEUES', nargs=-1, type=click.STRING)
+@click.argument(u'queues', metavar=u'[QUEUES]', nargs=-1)
 def clear(queues):
-    """
+    u"""
     Cancel all jobs on the given queues.
-    If no queue names are given then ALL queues are cleared."""
+    If no queue names are given then ALL queues are cleared.
+    """
+
     data_dict = {
         u'queues': queues,
     }
@@ -122,9 +123,9 @@ def clear(queues):
 
 
 @jobs.command(name=u'test', short_help=u'Enqueue a test job.')
-@click.argument(u'queues', metavar=u'QUEUES', nargs=-1, type=click.STRING)
+@click.argument(u'queues', metavar=u'[QUEUES]', nargs=-1, type=click.STRING)
 def test(queues):
-    """
+    u"""
     Enqueue a test job. If no queue names are given then the job is
     added to the default queue. If queue names are given then a
     separate test job is added to each of the queues.
