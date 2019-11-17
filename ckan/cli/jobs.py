@@ -19,11 +19,10 @@ def jobs():
               short_help=u'Start a worker that fetches jobs '
                          u'from queues and executes them.',
               )
-@click.option('--burst', short_help='Start worker in burst mode.',
-              is_flag=True, defaut=False)
-@click.argument('QUEUES', nargs=-1, type=click.STRING)
+@click.option('--burst', help='Start worker in burst mode.', is_flag=True)
+@click.argument(u'queues', metavar=u'QUEUES', nargs=-1, type=click.STRING)
 def worker(queues, burst):
-    """
+    u"""
     Start a worker that fetches jobs from queues and executes
     them. If no queue names are given then the worker listens
     to the default queue, this is equivalent to
@@ -49,9 +48,9 @@ def worker(queues, burst):
 
 
 @jobs.command(name=u'list', short_help=u'List currently enqueued jobs from the given queues.')
-@click.argument('queues', metavar='QUEUES', nargs=-1, type=click.STRING)
+@click.argument(u'queues', metavar=u'QUEUES', nargs=-1, type=click.STRING)
 def list_(queues):
-    """
+    u"""
     List currently enqueued jobs from the given queues. If no queue
     names are given then the jobs from all queues are listed.
     """
@@ -69,10 +68,10 @@ def list_(queues):
 
 
 @jobs.command(name=u'show', short_help=u'Show details about a specific job.')
-@click.argument('id', metavar='ID',
+@click.argument(u'id', metavar=u'ID',
                 type=click.STRING, required=True)
 def show(id):
-    """
+    u"""
     Show details about a specific job.
     """
     # if not self.args:
@@ -92,11 +91,10 @@ def show(id):
     click.echo(u'Queue:   {}'.format(job[u'queue']))
 
 
-@jobs.command(name='cancel', short_help='Cancel a specific job.')
-@click.argument('id', metavar='ID',
-                type=click.STRING, required=True)
+@jobs.command(name=u'cancel', short_help=u'Cancel a specific job.')
+@click.argument(u'id', metavar=u'ID', type=click.STRING, required=True)
 def cancel(id):
-    """
+    u"""
     Cancel a specific job. Jobs can only be canceled while they are
     enqueued. Once a worker has started executing a job it cannot
     be aborted anymore.
@@ -110,7 +108,7 @@ def cancel(id):
 
 
 @jobs.command(name=u'clear', short_help=u'Cancel all jobs on the given queues.')
-@click.argument('queues', metavar='QUEUES', nargs=-1, type=click.STRING)
+@click.argument(u'queues', metavar=u'QUEUES', nargs=-1, type=click.STRING)
 def clear(queues):
     """
     Cancel all jobs on the given queues.
@@ -124,7 +122,7 @@ def clear(queues):
 
 
 @jobs.command(name=u'test', short_help=u'Enqueue a test job.')
-@click.argument('queues', metavar='QUEUES', nargs=-1, type=click.STRING)
+@click.argument(u'queues', metavar=u'QUEUES', nargs=-1, type=click.STRING)
 def test(queues):
     """
     Enqueue a test job. If no queue names are given then the job is
